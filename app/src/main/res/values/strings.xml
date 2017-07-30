@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">"Blood Donation "</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="blood_groups">
+        <item>Blood Group</item>
+        <item>A-</item>
+        <item>A+</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+    </string-array>
+    <string-array name="genders">
+        <item>Gender</item>
+        <item>Male</item>
+        <item>Female</item>
+        <item>Others</item>
+    </string-array>
+    <string name="myClientID">856343417231-fh22i0kes9qfov2ijmulm8dstrmlfbg3.apps.googleusercontent.com </string>
+    <string name="google_maps_key">AIzaSyDmO5bKASuH_B4b1tPMJvX0ON3SvnabdK0</string>
+
+</resources>
