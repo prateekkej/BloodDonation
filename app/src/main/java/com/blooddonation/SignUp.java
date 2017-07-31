@@ -98,7 +98,7 @@ private FirebaseDatabase firebaseDatabase;
             public void onSuccess(AuthResult authResult) {
                 Toast.makeText(getApplicationContext(),"User created Successfully.",Toast.LENGTH_LONG).show();
                 pd.setMessage("Creating Profile.");
-                User_Class user_class= new User_Class(null,memail,musername,mgender,mage,mcontact,mbloodgroup,mcity,mpincode);
+                User_Class user_class= new User_Class(null,memail,musername,mgender,mage,mcontact,mbloodgroup,mcity,mpincode,"",2);
                 user_class.uid=firebaseAuth.getCurrentUser().getUid();
                 firebaseDatabase.getReference("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(user_class).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

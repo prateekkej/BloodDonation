@@ -38,6 +38,65 @@
                 android:columnCount="2"
                 android:paddingLeft="10dp">
 
+                <Spinner
+                    android:id="@+id/bloodEdit"
+                    style="@style/Widget.AppCompat.Light.Spinner.DropDown.ActionBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_row="1"
+                    android:layout_weight="1"
+                    android:animateLayoutChanges="true"
+                    android:entries="@array/blood_groups"
+                    android:spinnerMode="dialog"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_row="6"
+                    android:text="Age"
+                    android:textAlignment="textStart"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/ageField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="6"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/newAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Age (18+)"
+                        android:numeric="integer" />
+                </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/userAge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_row="6"
+                    android:text="Not Uploaded"
+                    android:textAlignment="textStart"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textView20"
                     android:layout_width="wrap_content"
@@ -59,6 +118,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
+                    android:layout_row="0"
                     android:text="Not Uploaded"
                     android:textAlignment="textStart"
                     android:textColor="#000000"
@@ -83,6 +143,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="10dp"
+                    android:layout_row="1"
                     android:text="Not Uploaded"
                     android:textAlignment="textStart"
                     android:textColor="#000000"

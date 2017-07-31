@@ -9,6 +9,7 @@ import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +31,14 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +49,7 @@ public class Login extends AppCompatActivity {
     private Button signin,signup,forgot;
     private TextInputLayout passwordb;
     private EditText password,emailid;
+    private DatabaseReference fire;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -63,6 +72,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.login);
         initializeView();
         firebaseAuth=FirebaseAuth.getInstance();
+        fire=Firebase.getDatabase().getReference();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.myClientID)).requestEmail().build();
 
@@ -163,13 +173,39 @@ startActivity(new Intent(Login.this,SignUp.class));
     }
     private void informFirebaseforGoogle(GoogleSignInAccount account){
         AuthCredential authCredential= GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        final ProgressDialog progressDialog= new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Logging in");
+        progressDialog.show();
         firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                Toast.makeText(getApplicationContext(),"Signed in Successfully.",Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(Login.this,Dashboard.class));
-                finish();
-            }
+                fire.child("users").child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue(User_Class.class) == null) {
+                            fire.child("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(new User_Class(
+                                    firebaseAuth.getCurrentUser().getUid(),
+                                    firebaseAuth.getCurrentUser().getEmail(),firebaseAuth.getCurrentUser().getDisplayName(),
+                                    "", "", "", "", "", "",firebaseAuth.getCurrentUser().getPhotoUrl().toString(), 1));
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"Signed in Successfully.",Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(getApplicationContext(),"Signed in Successfully.",Toast.LENGTH_SHORT).show();
+
+                        }
+                        startActivity(new Intent(Login.this,Dashboard.class));
+                        finish();
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                                    }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

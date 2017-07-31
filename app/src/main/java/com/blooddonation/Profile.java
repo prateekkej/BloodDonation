@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,11 +43,12 @@ import java.util.Map;
 
 public class Profile extends Fragment {
         private Button logOut;
-    public EditText updatedPhone;
+    public EditText updatedPhone,newAge;
     public  TextView name,phone,location,bg,ld;
     private ImageView userImage;
-    private TextView email;
-    public  TextInputLayout updatePhone;
+    public Spinner bgEdit;
+    public TextView email,age;
+    public  TextInputLayout updatePhone,ageField;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.my_profile,container,false);
@@ -71,16 +74,17 @@ public class Profile extends Fragment {
                     phone.setText(Dashboard.user.mcontact);
                     location.setText(Dashboard.user.mcity);
                     bg.setText(Dashboard.user.mbloodgroup);
+                    age.setText(Dashboard.user.mage);
                     if(Dashboard.user.lastdonated !=null)
                     {
                     ld.setText(Dashboard.user.lastdonated);}
                     email.setText(Dashboard.firebaseAuth.getCurrentUser().getEmail());
                     if(!Dashboard.user.getPhotoUrl().isEmpty())
-                    Glide.with(getActivity()).asBitmap().load(Dashboard.user.getPhotoUrl()).into(userImage);
+try{                    Glide.with(getActivity()).asBitmap().load(Dashboard.user.getPhotoUrl()).into(userImage);}catch (NullPointerException n){}
 
                 } else {
                     if (Dashboard.firebaseAuth.getCurrentUser().getPhotoUrl() != null) {
-                        Glide.with(getActivity()).asBitmap().load(Dashboard.firebaseAuth.getCurrentUser().getPhotoUrl()).into(userImage);
+                       try{ Glide.with(getActivity()).asBitmap().load(Dashboard.firebaseAuth.getCurrentUser().getPhotoUrl()).into(userImage);}catch (NullPointerException e){}
                     }
                 }
             }
@@ -96,10 +100,14 @@ public class Profile extends Fragment {
         logOut=(Button)view.findViewById(R.id.logoutbutton);
         updatePhone=(TextInputLayout)view.findViewById(R.id.updatePhoneField);
         updatePhone.setVisibility(View.GONE);
+        ageField=(TextInputLayout)view.findViewById(R.id.ageField);
         email=(TextView)view.findViewById(R.id.email);
         updatedPhone=(EditText)view.findViewById(R.id.updatedPhone);
         name=(TextView)view.findViewById(R.id.userName);
         phone=(TextView)view.findViewById(R.id.phone);
+        newAge=(EditText)view.findViewById(R.id.newAge);
+        bgEdit=(Spinner)view.findViewById(R.id.bloodEdit);
+        age=(TextView)view.findViewById(R.id.userAge);
         bg=(TextView)view.findViewById(R.id.bloodGroup);
         ld=(TextView)view.findViewById(R.id.lastdonated);
         ld.setOnClickListener(new View.OnClickListener() {

@@ -34,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +55,22 @@ public SupportMapFragment map;
     MarkerOptions me;
     View view;
    public static java.util.concurrent.CopyOnWriteArrayList<SmallUserObject> closePeople;
-    public static SmallUserObject smallUserObject;
+    public void filter(){
+        sortMyMap();
+    }
 
+void sortMyMap(){
+
+    for(SmallUserObject i : closePeople){
+        if(i.bloodgroup!=null && !i.bloodgroup.equals(Dashboard.fbloodgroup) || i.bloodgroup==null)
+        {
+            i.marker.setVisible(false);
+        }
+
+
+    }
+
+}
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +129,8 @@ public SupportMapFragment map;
             loc.put("lat",myLatLng.latitude);
             loc.put("lon",myLatLng.longitude);
             Dashboard.databaseReference.child("users-location").child(Dashboard.firebaseAuth.getCurrentUser().getUid()).updateChildren(loc);
+            Dashboard.databaseReference.child("users-location")
+                    .orderByChild("lat").startAt(myLatLng.latitude-0.1).endAt(myLatLng.latitude +0.1).addValueEventListener(this);
             readyMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
     }else{
             Toast.makeText(getContext(), "Please enable Location from Settings . If enabled , wait to get new Location.", Toast.LENGTH_SHORT).show();}}
@@ -121,6 +138,8 @@ public SupportMapFragment map;
         if(myMarker==null){
             me=new MarkerOptions().title("Me").position(myLatLng);
             myMarker=readyMap.addMarker(me);
+            Dashboard.databaseReference.child("users-location")
+                    .orderByChild("lat").startAt(myLatLng.latitude-0.1).endAt(myLatLng.latitude +0.1).addValueEventListener(this);
             readyMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng,15));
         }else{
             myMarker.setPosition(myLatLng);
@@ -135,7 +154,7 @@ public SupportMapFragment map;
    }
 }
     private void addMarker(SmallUserObject temp){
-        temp.marker=readyMap.addMarker(new MarkerOptions().position(new LatLng(temp.lat,temp.lon)).title(temp.phone));
+        temp.marker=readyMap.addMarker(new MarkerOptions().position(new LatLng(temp.lat,temp.lon)).title("Blood:"+temp.bloodgroup));
     }
     private void updatemarker(SmallUserObject ob){
         ob.marker.setPosition(new LatLng(ob.lat,ob.lon));
@@ -173,7 +192,8 @@ public SupportMapFragment map;
             if(!flag){
             SmallUserObject temp= new SmallUserObject();
             temp.copyfromBro(s);
-            addMarker(temp);
+                    addMarker(temp);
+
             closePeople.add(temp);}
 
         }

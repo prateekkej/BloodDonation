@@ -11,11 +11,12 @@ public class User_Class {
     public String memail, mname, mgender, mage, mcontact, mcity, mpincode, mbloodgroup,uid,photo,lastdonated;
     public Marker marker;
     public LatLng latLng;
+    public int registered;
     public User_Class(){
         photo="";
     }
 
-    User_Class(String uid,String email,String username,String gender,String age,String phone,String bloodGroup,String city,String pinCode){
+    User_Class(String uid,String email,String username,String gender,String age,String phone,String bloodGroup,String city,String pinCode,String ph,int registrar){
         memail= email;
         mname=username;
         mgender=gender;
@@ -25,6 +26,8 @@ public class User_Class {
         mcity=city;
         mpincode=pinCode;
         this.uid=uid;
+        photo=ph;
+       registered=registrar;
     }
 public String getPhotoUrl(){
     return this.photo;

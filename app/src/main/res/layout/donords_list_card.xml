@@ -10,12 +10,35 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="68dp"
+            android:text="Blood:"
+            app:layout_constraintLeft_toRightOf="@+id/donorImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/bloodDonor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:text="Name"
+            app:layout_constraintLeft_toRightOf="@+id/textView3"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/donorCity" />
 
         <ImageView
             android:id="@+id/donorImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
@@ -30,85 +53,82 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:text="Name:"
             app:layout_constraintLeft_toRightOf="@+id/donorImage"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="8dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="Location:"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/donorImage"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"
-            android:layout_marginStart="8dp" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:text="Phone:"
             app:layout_constraintLeft_toRightOf="@+id/donorImage"
             android:layout_marginLeft="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView6"
-            app:layout_constraintVertical_bias="0.111"
-            android:layout_marginStart="8dp" />
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
             android:id="@+id/donorName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
+            android:layout_marginStart="26dp"
             android:layout_marginTop="16dp"
             android:text="Name"
             app:layout_constraintLeft_toRightOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="26dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/donorCity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="City."
             app:layout_constraintLeft_toRightOf="@+id/textView6"
-            app:layout_constraintTop_toBottomOf="@+id/donorName"
-            android:layout_marginStart="8dp" />
+            app:layout_constraintTop_toBottomOf="@+id/donorName" />
 
         <TextView
             android:id="@+id/donorPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="23dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="23dp"
             android:autoLink="phone"
             android:text="Phone Number"
             app:layout_constraintLeft_toRightOf="@+id/textView7"
-            app:layout_constraintTop_toBottomOf="@+id/donorCity"
-            android:layout_marginStart="23dp" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/bloodDonor" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="84dp"
+            android:id="@+id/linearLayout"
+            android:layout_width="53dp"
+            android:layout_height="134dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/donorName"
-            android:layout_marginLeft="8dp"
             app:layout_constraintHorizontal_bias="1.0"
-            android:id="@+id/linearLayout">
+            app:layout_constraintLeft_toRightOf="@+id/donorName"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
                 android:id="@+id/smsDonor"
@@ -117,10 +137,16 @@
                 app:srcCompat="@drawable/ic_sms_black_24dp" />
 
             <ImageButton
+                android:id="@+id/emailDonor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_email_black_24dp" />
+
+            <ImageButton
                 android:id="@+id/callDonor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@android:drawable/ic_menu_call" />
+                app:srcCompat="@drawable/ic_local_phone_black_24dp" />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>

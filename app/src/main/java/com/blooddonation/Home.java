@@ -20,18 +20,27 @@ public class Home extends Fragment {
    public View view;
     private TabLayout tabLayout;
     private ViewPager homePager;
+    MyAdapter  myAdapter;
+
+
+    public void filter(){
+myAdapter.map.filter();
+
+    }
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 initializeViews(inflater,container);
         return view;
 
 
     }
+
 private void initializeViews(LayoutInflater inflater,ViewGroup container)
 {
     view=inflater.inflate(R.layout.home,container,false);
     tabLayout=(TabLayout)view.findViewById(R.id.homeTabLayout);
     homePager=(ViewPager)view.findViewById(R.id.homepager);
-    MyAdapter  myAdapter= new MyAdapter(getActivity().getSupportFragmentManager());
+    myAdapter= new MyAdapter(getActivity().getSupportFragmentManager());
     homePager.setAdapter(myAdapter);
     tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
         @Override
@@ -69,7 +78,7 @@ class MyAdapter extends FragmentPagerAdapter{
     public MyAdapter(FragmentManager fragmentManager){
     super(fragmentManager);
     map=new MapsFragment();
-    donorsListFragment= new DonorsListFragment();
+              donorsListFragment= new DonorsListFragment();
 }
 
 
