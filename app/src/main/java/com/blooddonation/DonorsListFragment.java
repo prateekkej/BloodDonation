@@ -56,6 +56,7 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
+       //check if a marker has been filtered out.
         if(MapsFragment.closePeople.get(position).marker.isVisible()) {
             if(MapsFragment.closePeople.get(position).clicked){
                 holder.itemView.setBackgroundColor(ColorUtils.setAlphaComponent(Color.CYAN,60));
@@ -98,15 +99,15 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
                     em.setData(Uri.parse("mailto:"));
                     em.putExtra(Intent.EXTRA_SUBJECT, "Blood Required[URGENT]");
                     em.putExtra(Intent.EXTRA_EMAIL, MapsFragment.closePeople.get(position).email);
-                    em.putExtra(Intent.EXTRA_TEXT, "Hello" + MapsFragment.closePeople.get(position).name + "\n\n" +
-                            "I am writing this mail , as i am in the urgent need of blood same as your blood group. Any help from your side would be great.\n\n" +
+                    em.putExtra(Intent.EXTRA_TEXT, "Hello " + MapsFragment.closePeople.get(position).name + "\n\n" +
+                            "I am writing this mail , as i am in the urgent need of blood same as your blood group. " +
+                            "Any help from your side would be great.\n\n" +
                             "Yours truly \n" + Dashboard.user.mname);
                     startActivity(em);
                 }
             });
-        }else{
+        }else{//hides a card if not in filter range
             holder.itemView.setVisibility(View.GONE);
-
         }
 
     }

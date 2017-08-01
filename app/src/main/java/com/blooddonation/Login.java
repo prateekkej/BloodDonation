@@ -50,6 +50,7 @@ public class Login extends AppCompatActivity {
     private TextInputLayout passwordb;
     private EditText password,emailid;
     private DatabaseReference fire;
+    private GoogleSignInOptions gso;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -65,45 +66,71 @@ public class Login extends AppCompatActivity {
 
 
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-        initializeView();
+    void initializeFirebaseAndGoogle(){
         firebaseAuth=FirebaseAuth.getInstance();
         fire=Firebase.getDatabase().getReference();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        // builds the intent for Google SIgn IN.
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.myClientID)).requestEmail().build();
-
-        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+        //Establishes connection with Google Play Services.
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
             }
         }).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+
+    }
+    void settingOnClickListeners(){
+        // on Click listeners
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               if(emailid.getText().toString().isEmpty()){
-                   Toast.makeText(getApplicationContext(),"Please enter an email id",Toast.LENGTH_LONG).show();
-               }else if(isValidEmail(emailid.getText().toString())){
+                if(emailid.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(),"Please enter an email id",Toast.LENGTH_LONG).show();
+                }else if(isValidEmail(emailid.getText().toString())){
 
-                   passwordb.setVisibility(View.VISIBLE);
-               }
-               else{
-                   Toast.makeText(Login.this, "Please check your E-Mail id .", Toast.LENGTH_SHORT).show();
-               }
-               if(!emailid.getText().toString().isEmpty() && !password.getText().toString().isEmpty() )
-               { signMeInWithEmailId(emailid.getText().toString(),password.getText().toString());
-            }
-        }});
+                    passwordb.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(Login.this, "Please check your E-Mail id .", Toast.LENGTH_SHORT).show();
+                }
+                if(!emailid.getText().toString().isEmpty() && !password.getText().toString().isEmpty() )
+                { signMeInWithEmailId(emailid.getText().toString(),password.getText().toString());
+                }
+            }});
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-startActivity(new Intent(Login.this,SignUp.class));
+                startActivity(new Intent(Login.this,SignUp.class));
             }
         });
+        googleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(signInIntent,2);
+        }});
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isValidEmail(emailid.getText().toString())){
+                    firebaseAuth.sendPasswordResetEmail(emailid.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getApplicationContext(),"Please check your mail for Password reset Link.",Toast.LENGTH_LONG).show();
+                        }
+                    });}}});
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login);
+        initializeView();
+        initializeFirebaseAndGoogle();
+        settingOnClickListeners();
+
     }
     private void initializeView(){
         signin=(Button)findViewById(R.id.signinbutton);
@@ -115,26 +142,7 @@ startActivity(new Intent(Login.this,SignUp.class));
         googleButton=(SignInButton)findViewById(R.id.googleButton);
         googleButton.setSize(SignInButton.SIZE_WIDE);
         googleButton.setColorScheme(SignInButton.COLOR_AUTO);
-        googleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-                startActivityForResult(signInIntent,2);
-            }
-        });
         signup=(Button)findViewById(R.id.signup);
-        forgot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isValidEmail(emailid.getText().toString())){
-                firebaseAuth.sendPasswordResetEmail(emailid.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(getApplicationContext(),"Please check your mail for Password reset Link.",Toast.LENGTH_LONG).show();
-                    }
-                });}
-            }
-        });
     }
     public static boolean isValidEmail(String email) {
 
@@ -149,6 +157,7 @@ startActivity(new Intent(Login.this,SignUp.class));
         final ProgressDialog progressDialog= new ProgressDialog(this);
         progressDialog.setMessage("Logging in.");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
         progressDialog.show();
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
@@ -172,19 +181,24 @@ startActivity(new Intent(Login.this,SignUp.class));
         });
     }
     private void informFirebaseforGoogle(GoogleSignInAccount account){
-        AuthCredential authCredential= GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        AuthCredential authCredential= GoogleAuthProvider.getCredential(account.getIdToken(),null);//stores google key for firebase
         final ProgressDialog progressDialog= new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Logging in");
         progressDialog.show();
+        //signs in using Google.
         firebaseAuth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    //Checks if the user is already signed up on firebase using Google if yes , then continue to Dashboard else create a new profile
+                    //with some relevant info
                 fire.child("users").child(firebaseAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue(User_Class.class) == null) {
+                            // last 1 denotes , the user registered through Google.Can be used later to ask user to fil their profile details.
                             fire.child("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(new User_Class(
                                     firebaseAuth.getCurrentUser().getUid(),
                                     firebaseAuth.getCurrentUser().getEmail(),firebaseAuth.getCurrentUser().getDisplayName(),
@@ -204,7 +218,7 @@ startActivity(new Intent(Login.this,SignUp.class));
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                });}
                                     }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

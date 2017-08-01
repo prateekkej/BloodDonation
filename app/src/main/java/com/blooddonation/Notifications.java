@@ -16,22 +16,32 @@ import android.widget.ImageView;
  */
 
 public class Notifications extends Fragment {
+    View v;
+    RecyclerView listView;
+    NotificationsCardAdapter notificationsCardAdapter;
+
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.notifications,container,false);
-        RecyclerView listView= (RecyclerView) v.findViewById(R.id.notifications_list);
-        NotificationsCardAdapter notificationsCardAdapter= new NotificationsCardAdapter();
-        listView.setAdapter(notificationsCardAdapter);
-        listView.setLayoutManager(new LinearLayoutManager(getContext()));
+        v = inflater.inflate(R.layout.notifications,container,false);
+        initializeViews();
+
                 return v;
     }
+    void initializeViews(){
+        listView = (RecyclerView) v.findViewById(R.id.notifications_list);
+        notificationsCardAdapter = new NotificationsCardAdapter();
+        listView.setAdapter(notificationsCardAdapter);
+        listView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+    }
     class NotificationsCardAdapter extends RecyclerView.Adapter<Notification_card>{
 
         @Override
         public Notification_card onCreateViewHolder(ViewGroup parent, int viewType) {
-View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.notification,parent,false);
+            View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.notification,parent,false);
             return new Notification_card(v);
         }
 
@@ -41,7 +51,7 @@ View v=LayoutInflater.from(parent.getContext()).inflate(R.layout.notification,pa
 
         @Override
         public int getItemCount() {
-            return 10;
+            return 7;
         }
     }
     class Notification_card extends RecyclerView.ViewHolder{

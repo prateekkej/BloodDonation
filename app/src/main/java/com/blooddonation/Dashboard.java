@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -54,19 +55,19 @@ public class Dashboard extends AppCompatActivity {
     public static FirebaseDatabase firebaseDatabase;
     public static DatabaseReference databaseReference;
     public static User_Class user;
-    Geocoder geocoder;
-    int count=0;
-    TabLayout tabLayout;
+    public Geocoder geocoder;
+    public int count=0;
+    public TabLayout tabLayout;
     public static String fbloodgroup;
     public static StorageReference storageReference;
-    ViewPager viewPager;
-    Home home;
+    public ViewPager viewPager;
+    public Home home;
     public static String currentLocality;
-    Profile profile;
-   public static boolean updatemode=false;
-    Notifications notifications;
-    MyAdapter myAdapter;
-    Menu myMenu;
+    public Profile profile;
+    public static boolean updatemode=false;
+    public Notifications notifications;
+    public MyAdapter myAdapter;
+    public Menu myMenu;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,7 +76,6 @@ public class Dashboard extends AppCompatActivity {
 
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
        if(item.getItemId()==R.id.upd){
@@ -105,7 +105,6 @@ public class Dashboard extends AppCompatActivity {
                           List<Address> s=geocoder.getFromLocation(MapsFragment.myLatLng.latitude,MapsFragment.myLatLng.longitude,1);
                           currentLocality=s.get(0).getLocality();
                           if(currentLocality!=null){
-                              Map<String,Object> ob= new HashMap<>();
                               haha.put("mcity",currentLocality);
                           }
                       }catch (IOException e){}
@@ -113,7 +112,7 @@ public class Dashboard extends AppCompatActivity {
                       pd.setMessage("Updating Profile ...");
                       pd.setCancelable(false);
                       pd.show();
-                      Dashboard.databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).updateChildren(haha).addOnSuccessListener(new OnSuccessListener<Void>() {
+                      Dashboard.databaseReference.child("users").child(me.getUid()).updateChildren(haha).addOnSuccessListener(new OnSuccessListener<Void>() {
                           @Override
                           public void onSuccess(Void aVoid) {
                               item.setTitle("Update Profile");
@@ -162,12 +161,16 @@ public class Dashboard extends AppCompatActivity {
            });
 
        }else if(item.getItemId()==R.id.about){
-           AlertDialog alertDialog= new AlertDialog.Builder(this).setTitle("About Us ").setMessage("BloodBank is an app designed for finding the valuable blood donators as soon as possible ast the earliest by TCS.").create();
-     alertDialog.show();
+           AlertDialog alertDialog= new AlertDialog.Builder(this).setTitle("About Us ").setMessage("BloodBank is an app " +
+                   "designed for finding the valuable blood donators as soon as possible ast the earliest by TCS.").create();
+                      alertDialog.show();
 
        }else if(item.getItemId()==R.id.contactus){
-
-
+           Intent em = new Intent(Intent.ACTION_SENDTO);
+           em.setData(Uri.parse("mailto:"));
+           em.putExtra(Intent.EXTRA_SUBJECT, "Query []");
+           em.putExtra(Intent.EXTRA_EMAIL, "blooddonation.tcs@gmail.com");
+           startActivity(em);
         }
         return true;
     }
@@ -201,7 +204,7 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         firebaseInit();
-        databaseReference.child("users").child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("users").child(me.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user=dataSnapshot.getValue(User_Class.class);
@@ -212,13 +215,7 @@ public class Dashboard extends AppCompatActivity {
                         obj.lat = MapsFragment.myLatLng.latitude;
                         obj.lon = MapsFragment.myLatLng.longitude;
                     }
-                    Map<String, Object> up = new HashMap<>();
-                    up.put("phone", user.mcontact);
-                    up.put("bloodgroup",user.mbloodgroup);
-                    up.put("lastDonated", user.lastdonated);
-                    up.put("photo", user.getPhotoUrl());
-                    databaseReference.child("users-location").child(firebaseAuth.getCurrentUser().getUid()).setValue(obj);
-                    databaseReference.child("users-location").child(firebaseAuth.getCurrentUser().getUid()).updateChildren(up);
+                    databaseReference.child("users-location").child(me.getUid()).setValue(obj);
                 }
             }
 
@@ -237,7 +234,7 @@ public class Dashboard extends AppCompatActivity {
         myAdapter= new MyAdapter(getSupportFragmentManager());
         viewPager.setAdapter(myAdapter);
         viewPager.setOffscreenPageLimit(3);
-         tabLayout=(TabLayout)findViewById(R.id.tabLayout);
+        tabLayout=(TabLayout)findViewById(R.id.tabLayout);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

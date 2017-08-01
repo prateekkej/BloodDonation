@@ -28,10 +28,11 @@ public class SignUp extends AppCompatActivity {
     private EditText username, email, password, confirm, age, contact, city, pincode;
     private Spinner gender,bloodgroup;
     private Button createAccount;
-    String memail, musername, mpassword, mconfirm, mgender, mage, mcontact, mcity, mpincode, mbloodgroup;
-private FirebaseDatabase firebaseDatabase;
-        String MobilePattern = "[0-9]{10}";
-    String PinPattern = "[0-9]{6}";
+    private String memail, musername, mpassword, mconfirm, mgender, mage, mcontact, mcity, mpincode, mbloodgroup;
+    private FirebaseDatabase firebaseDatabase;
+    private String MobilePattern = "[0-9]{10}";
+    private String PinPattern = "[0-9]{6}";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +60,6 @@ private FirebaseDatabase firebaseDatabase;
         mpincode = pincode.getText().toString();
         mbloodgroup = bloodgroup.getSelectedItem().toString();
 
-
-
         if (memail.isEmpty() || mpassword.isEmpty() || musername.isEmpty() || mconfirm.isEmpty() || mgender.isEmpty() || mage.isEmpty() || mcontact.isEmpty() || mcity.isEmpty() || mpincode.isEmpty()){
             Toast.makeText(getApplicationContext(), "Fill the details completely", Toast.LENGTH_SHORT).show();
             return;
@@ -84,10 +83,13 @@ private FirebaseDatabase firebaseDatabase;
         {
             Toast.makeText(getApplicationContext(), "Enter Valid Pincode", Toast.LENGTH_SHORT).show();
         }
+
         final ProgressDialog pd= new ProgressDialog(this);
         pd.setMessage("Creating User");
         pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        pd.setCancelable(false);
         pd.show();
+        //create new user.
         firebaseAuth.createUserWithEmailAndPassword(memail, mpassword).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -98,8 +100,10 @@ private FirebaseDatabase firebaseDatabase;
             public void onSuccess(AuthResult authResult) {
                 Toast.makeText(getApplicationContext(),"User created Successfully.",Toast.LENGTH_LONG).show();
                 pd.setMessage("Creating Profile.");
+                //create profile with input data.2 denotes user signed up via email form.
                 User_Class user_class= new User_Class(null,memail,musername,mgender,mage,mcontact,mbloodgroup,mcity,mpincode,"",2);
-                user_class.uid=firebaseAuth.getCurrentUser().getUid();
+                user_class.uid=firebaseAuth.getCurrentUser().getUid();//since the user is signed up, it already gets registered.
+                //uploads the profile.
                 firebaseDatabase.getReference("users").child(firebaseAuth.getCurrentUser().getUid()).setValue(user_class).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
