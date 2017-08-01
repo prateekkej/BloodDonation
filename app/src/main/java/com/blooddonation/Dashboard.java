@@ -1,15 +1,12 @@
 package com.blooddonation;
 
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,19 +14,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,11 +35,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Dashboard extends AppCompatActivity {
     public static FirebaseAuth firebaseAuth;
@@ -65,7 +55,7 @@ public class Dashboard extends AppCompatActivity {
     public static String currentLocality;
     public Profile profile;
     public static boolean updatemode=false;
-    public Notifications notifications;
+    public History history;
     public MyAdapter myAdapter;
     public Menu myMenu;
 
@@ -172,8 +162,17 @@ public class Dashboard extends AppCompatActivity {
            em.putExtra(Intent.EXTRA_EMAIL, "blooddonation.tcs@gmail.com");
            startActivity(em);
         }
+        else if(item.getItemId()==R.id.sharemylocation){
+
+                   Intent lo= new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"));
+                   lo.putExtra("sms_body","Hey! I am in Emergency. My Location is :" );
+                   startActivity(lo);
+              
+
+       }
         return true;
     }
+
     public void firebaseInit(){
         firebaseAuth= FirebaseAuth.getInstance();
         me= firebaseAuth.getCurrentUser();
@@ -253,7 +252,7 @@ updateActionBar(position);
         });
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_home_black_24dp).setText("Home"),0);
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_person_black_24dp).setText("Profile"),1);
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_notifications_black_24dp).setText("Notifications"),2);
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_history_black_24dp).setText("History"),2);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -303,8 +302,8 @@ updateActionBar(position);
                 return home;
             }
             else if(position==2) {
-                notifications = new Notifications();
-                return notifications;
+                history = new History();
+                return history;
             }else if(position==1){
                profile= new Profile();
                 return profile;
@@ -323,7 +322,7 @@ updateActionBar(position);
         getMenuInflater().inflate(R.menu.edit,myMenu);
 
     }
-    else if (x==2){getSupportActionBar().setTitle("Requests");
+    else if (x==2){getSupportActionBar().setTitle("History");
         myMenu.clear();
     }
     }

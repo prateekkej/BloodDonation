@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickListener,ValueEventListener,GoogleApiClient.ConnectionCallbacks,OnMapReadyCallback,GoogleApiClient.OnConnectionFailedListener,LocationListener{
     public SupportMapFragment map;
-    public Location myLocation;
+    public static Location myLocation;
     public static LatLng myLatLng;
     public GoogleMap readyMap;
     public Marker myMarker;

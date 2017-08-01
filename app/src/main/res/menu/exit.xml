@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/sharemylocation"
+        android:title="Share My Location" />
+    <item
+        android:id="@+id/about"
+        android:title="About"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/contactus"
+        android:title="Contact us"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/exit"
+        android:title="Exit"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/addHist"
+        android:title="Add History"
+        app:showAsAction="always" />
 </menu>

@@ -9,30 +9,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.List;
 
 
 /**
  * Created by Prateek on 7/28/2017.
  */
 
-public class Notifications extends Fragment {
+public class History extends Fragment {
     View v;
     RecyclerView listView;
+    java.util.concurrent.CopyOnWriteArrayList<SmallUserObject> myHistory;
     NotificationsCardAdapter notificationsCardAdapter;
-
-
+    TextView noHistoryBanner;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.notifications,container,false);
+        myHistory= new java.util.concurrent.CopyOnWriteArrayList<>();
         initializeViews();
-
                 return v;
     }
     void initializeViews(){
         listView = (RecyclerView) v.findViewById(R.id.notifications_list);
         notificationsCardAdapter = new NotificationsCardAdapter();
+        if(notificationsCardAdapter.getItemCount()==0){
+            noHistoryBanner=(TextView)v.findViewById(R.id.noHistoryBanner);
+            noHistoryBanner.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
         listView.setAdapter(notificationsCardAdapter);
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -47,11 +57,12 @@ public class Notifications extends Fragment {
 
 
         public void onBindViewHolder(Notification_card holder, int position) {
+
         }
 
         @Override
         public int getItemCount() {
-            return 7;
+            return myHistory.size();
         }
     }
     class Notification_card extends RecyclerView.ViewHolder{
