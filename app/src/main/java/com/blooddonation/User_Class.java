@@ -12,7 +12,8 @@ public class User_Class {
     public Marker marker;
     public LatLng latLng;
     public int registered;
-    public User_Class(){
+    public User_Class()
+    {
         photo="";
     }
 

@@ -44,7 +44,7 @@ import java.util.Map;
  * Created by Prateek on 7/30/2017.
  */
 
-public class MapsFragment extends Fragment  implements ValueEventListener,GoogleApiClient.ConnectionCallbacks,OnMapReadyCallback,GoogleApiClient.OnConnectionFailedListener,LocationListener{
+public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickListener,ValueEventListener,GoogleApiClient.ConnectionCallbacks,OnMapReadyCallback,GoogleApiClient.OnConnectionFailedListener,LocationListener{
 public SupportMapFragment map;
     Location myLocation;
     public static LatLng myLatLng;
@@ -60,15 +60,18 @@ public SupportMapFragment map;
     }
 
 void sortMyMap(){
-
     for(SmallUserObject i : closePeople){
         if(i.bloodgroup!=null && !i.bloodgroup.equals(Dashboard.fbloodgroup) || i.bloodgroup==null)
         {
             i.marker.setVisible(false);
         }
+        if(i.bloodgroup!=null && i.bloodgroup.equals(Dashboard.fbloodgroup) || i.bloodgroup==null) {
+            i.marker.setVisible(true);
+        }
 
 
     }
+    DonorsListFragment.adapter.notifyDataSetChanged();
 
 }
     @Override
@@ -86,6 +89,7 @@ void sortMyMap(){
            googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.maps_style));
            googleMap.setMyLocationEnabled(true);
            readyMap=googleMap;
+           googleMap.setOnMarkerClickListener(this);
        }catch (SecurityException e){
            Toast.makeText(getContext(),"Location Not Available",Toast.LENGTH_LONG).show();
        }
@@ -202,5 +206,16 @@ void sortMyMap(){
     @Override
     public void onCancelled(DatabaseError databaseError) {
 
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+     for(SmallUserObject i: closePeople){
+         if(i.marker.getId()!=null && i.marker.getId().equals(marker.getId())){
+             i.clicked=true;
+             DonorsListFragment.adapter.notifyItemChanged(closePeople.indexOf(i));
+             Home.tabLayout.getTabAt(1).select();
+     }}
+        return true;
     }
 }

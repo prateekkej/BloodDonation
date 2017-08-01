@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.Marker;
 
 public class SmallUserObject {
     public String name,phone,email,photo,uid,city,bloodgroup,lastDonated;
+    public boolean clicked;
     public double lat,lon;
     public Marker marker;
     public SmallUserObject()
@@ -33,11 +34,13 @@ public class SmallUserObject {
         this.photo=smallUserObject.photo;
         this.email=smallUserObject.email;
         this.uid=smallUserObject.uid;
+        this.bloodgroup=smallUserObject.bloodgroup;
         this.city=smallUserObject.city;
         this.phone=smallUserObject.phone;
         this.lastDonated=smallUserObject.lastDonated;
         this.lat=smallUserObject.lat;
         this.lon=smallUserObject.lon;
+        this.clicked=false;
     }
 
 

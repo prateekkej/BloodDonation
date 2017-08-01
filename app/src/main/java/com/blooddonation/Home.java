@@ -18,13 +18,15 @@ import android.view.ViewGroup;
 
 public class Home extends Fragment {
    public View view;
-    private TabLayout tabLayout;
-    private ViewPager homePager;
+    public static TabLayout tabLayout;
+    public static ViewPager homePager;
+    public static MapsFragment map;
+    public static DonorsListFragment donorsListFragment;
     MyAdapter  myAdapter;
 
 
     public void filter(){
-myAdapter.map.filter();
+    map.filter();
 
     }
 
@@ -63,8 +65,7 @@ private void initializeViews(LayoutInflater inflater,ViewGroup container)
 
 }
 class MyAdapter extends FragmentPagerAdapter{
-    MapsFragment map;
-    DonorsListFragment donorsListFragment;
+
     @Override
     public CharSequence getPageTitle(int position) {
         if(position==0){

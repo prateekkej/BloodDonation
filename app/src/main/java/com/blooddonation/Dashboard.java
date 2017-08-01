@@ -106,10 +106,8 @@ public class Dashboard extends AppCompatActivity {
                           currentLocality=s.get(0).getLocality();
                           if(currentLocality!=null){
                               Map<String,Object> ob= new HashMap<>();
-                              ob.put("mcity",currentLocality);
-                              Dashboard.databaseReference.child("users").child(Dashboard.firebaseAuth.getCurrentUser().getUid()).updateChildren(ob);
+                              haha.put("mcity",currentLocality);
                           }
-
                       }catch (IOException e){}
                       final ProgressDialog pd= new ProgressDialog(this);
                       pd.setMessage("Updating Profile ...");
@@ -203,7 +201,7 @@ public class Dashboard extends AppCompatActivity {
                     up.put("phone", user.mcontact);
                     up.put("bloodgroup",user.mbloodgroup);
                     up.put("lastDonated", user.lastdonated);
-                    up.put("photo", user.getPhotoUrl().toString());
+                    up.put("photo", user.getPhotoUrl());
                     databaseReference.child("users-location").child(firebaseAuth.getCurrentUser().getUid()).setValue(obj);
                     databaseReference.child("users-location").child(firebaseAuth.getCurrentUser().getUid()).updateChildren(up);
                 }
