@@ -143,6 +143,7 @@ public class Dashboard extends AppCompatActivity {
        }else if(item.getItemId()==R.id.sort){
            final AlertDialog alertDialog= new AlertDialog.Builder(this,R.style.AlertDialog).setView(R.layout.sorting).create();
            alertDialog.show();
+           Button clear=(Button)alertDialog.findViewById(R.id.clearFilter);
            final Spinner bgFilter=(Spinner)alertDialog.findViewById(R.id.bgFilterSpinner);
            Button bgFilterButton =(Button)alertDialog.findViewById(R.id.filterButton);
            bgFilterButton.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +154,21 @@ public class Dashboard extends AppCompatActivity {
                    alertDialog.dismiss();
                }
            });
-       }
+           clear.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   home.clearFilter();
+               }
+           });
+
+       }else if(item.getItemId()==R.id.about){
+           AlertDialog alertDialog= new AlertDialog.Builder(this).setTitle("About Us ").setMessage("BloodBank is an app designed for finding the valuable blood donators as soon as possible ast the earliest by TCS.").create();
+     alertDialog.show();
+
+       }else if(item.getItemId()==R.id.contactus){
+
+
+        }
         return true;
     }
     public void firebaseInit(){

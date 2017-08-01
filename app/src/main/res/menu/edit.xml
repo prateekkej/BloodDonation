@@ -3,6 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/contactus"
+        android:title="Contact us"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/about"
+        android:title="About"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/exit"
+        android:title="Exit"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/upd"
         android:enabled="true"
         android:title="Update Profile"

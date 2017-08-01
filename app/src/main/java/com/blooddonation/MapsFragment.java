@@ -58,6 +58,13 @@ public SupportMapFragment map;
     public void filter(){
         sortMyMap();
     }
+public void clearFilter(){
+    for(SmallUserObject i : closePeople){
+                 if(i.marker!=null)
+                   i.marker.setVisible(true);
+            }
+    DonorsListFragment.adapter.notifyDataSetChanged();
+}
 
 void sortMyMap(){
     for(SmallUserObject i : closePeople){

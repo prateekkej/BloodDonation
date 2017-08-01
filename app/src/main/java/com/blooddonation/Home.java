@@ -22,6 +22,11 @@ public class Home extends Fragment {
     public static ViewPager homePager;
     public static MapsFragment map;
     public static DonorsListFragment donorsListFragment;
+    public void clearFilter(){
+
+        map.clearFilter();
+
+    }
     MyAdapter  myAdapter;
 
 
