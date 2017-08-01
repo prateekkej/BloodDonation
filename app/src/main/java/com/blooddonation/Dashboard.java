@@ -167,7 +167,7 @@ public class Dashboard extends AppCompatActivity {
                    Intent lo= new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"));
                    lo.putExtra("sms_body","Hey! I am in Emergency. My Location is :" );
                    startActivity(lo);
-              
+
 
        }
         return true;
@@ -324,6 +324,8 @@ updateActionBar(position);
     }
     else if (x==2){getSupportActionBar().setTitle("History");
         myMenu.clear();
+        getMenuInflater().inflate(R.menu.exit,myMenu);
+
     }
     }
 }
