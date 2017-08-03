@@ -257,7 +257,6 @@ public class Dashboard extends AppCompatActivity {
                    });
                }
            });
-
        }
         return true;
     }

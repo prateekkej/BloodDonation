@@ -79,7 +79,7 @@ public class History extends Fragment {
             holder.to.setText(myHistory.get(position).to);
             holder.donationImage.buildDrawingCache();
             holder.stor.setText(myHistory.get(position).story);
-            holder.on.setText(myHistory.get(position).d+" / "+(myHistory.get(position).m+1)+" / "+ myHistory.get(position).y);
+            holder.on.setText(myHistory.get(position).d+" / "+(myHistory.get(position).m)+" / "+ myHistory.get(position).y);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
