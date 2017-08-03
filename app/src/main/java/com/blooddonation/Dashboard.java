@@ -2,6 +2,8 @@ package com.blooddonation;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -14,16 +16,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +41,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +73,12 @@ public class Dashboard extends AppCompatActivity {
     public History history;
     public MyAdapter myAdapter;
     public Menu myMenu;
+    private AlertDialog storyDialog;
+    public String storyImageURL;
+    ByteArrayOutputStream outputStream;
+    String myStory,myDonatedTo;
+    int d,m,y;
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,7 +89,7 @@ public class Dashboard extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-       if(item.getItemId()==R.id.upd){
+        if(item.getItemId()==R.id.upd){
           if(!updatemode) {
               profile.phone.setVisibility(View.GONE);
               profile.age.setVisibility(View.GONE);
@@ -139,14 +160,21 @@ public class Dashboard extends AppCompatActivity {
                @Override
                public void onClick(View view) {
                    fbloodgroup = bgFilter.getSelectedItem().toString();
-                   home.filter();
-                   alertDialog.dismiss();
+                   if(fbloodgroup.equals("Blood Group")){
+                       home.clearFilter();
+                   }
+                   else {
+                       home.filter();
+                   }
+                       alertDialog.dismiss();
                }
            });
            clear.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                    home.clearFilter();
+                   alertDialog.dismiss();
+
                }
            });
 
@@ -167,7 +195,68 @@ public class Dashboard extends AppCompatActivity {
                    Intent lo= new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"));
                    lo.putExtra("sms_body","Hey! I am in Emergency. My Location is :" );
                    startActivity(lo);
-
+       }
+       else if(item.getItemId()==R.id.addHist)
+       { storyDialog= new AlertDialog.Builder(this).setTitle("Add a donation.").setView(R.layout.story).create();
+           storyDialog.show();
+           ImageView selfi=(ImageView)storyDialog.findViewById(R.id.donationImage);
+           final EditText story=(EditText)storyDialog.findViewById(R.id.story);
+           final EditText donatedTo=(EditText)storyDialog.findViewById(R.id.donatedto);
+           Button saveMyStory=(Button)storyDialog.findViewById(R.id.save);
+           selfi.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   PopupMenu popupMenu=new PopupMenu(Dashboard.this,view);
+               popupMenu.getMenuInflater().inflate(R.menu.image_pop_up,popupMenu.getMenu());
+                   //Third party library for image Cropping
+                   CropImage.activity()
+                           .setGuidelines(CropImageView.Guidelines.ON)
+                           .setAspectRatio(16,9).setOutputCompressQuality(50).start(Dashboard.this);
+               }
+           });
+           saveMyStory.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   myStory=story.getText().toString().trim();
+                   myDonatedTo=donatedTo.getText().toString().trim();
+                   d= Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                   m=Calendar.getInstance().get(Calendar.MONTH);
+                   y=Calendar.getInstance().get(Calendar.YEAR);
+                   final ProgressDialog p= new ProgressDialog(Dashboard.this);
+                   p.setMessage("Uploading Image");
+                   p.setCancelable(false);p.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                   p.show();
+                   final String key=databaseReference.child("users-stories").child(me.getUid()).push().getKey();
+                  storageReference.child("users-stories").child(me.getUid()).child(key).putBytes(outputStream.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                       @Override
+                       public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                           if(task.isSuccessful()){
+                               p.setMessage("Image upload successful.Uploading story.");
+                               Story a= new Story(key,myStory,"",myDonatedTo,d,m+1,y);
+                               a.photoURL=task.getResult().getDownloadUrl().toString();
+                               databaseReference.child("users-stories").child(me.getUid()).child(key).setValue(a).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                   @Override
+                                   public void onSuccess(Void aVoid) {
+                                       Toast.makeText(Dashboard.this, "Story Saved.", Toast.LENGTH_SHORT).show();
+                                       storyDialog.dismiss();
+                                       storyDialog=null;
+                                   }
+                               }).addOnFailureListener(new OnFailureListener() {
+                                   @Override
+                                   public void onFailure(@NonNull Exception e) {
+                                       storageReference.child("users-stories").child(me.getUid()).child(key).delete();
+                                       Toast.makeText(Dashboard.this, "The Story failed to upload . Please try again.", Toast.LENGTH_SHORT).show();
+                                   }
+                               });
+                               p.dismiss();
+                           }else{
+                               Toast.makeText(Dashboard.this,task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                               p.dismiss();
+                           }
+                       }
+                   });
+               }
+           });
 
        }
         return true;
@@ -282,6 +371,26 @@ updateActionBar(position);
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            try {
+                if(result!=null){
+                    Uri imageUri = result.getUri();
+                    storyImageURL=imageUri.toString();
+                    Glide.with(getApplicationContext()).asBitmap().load(imageUri).into((ImageView) storyDialog.findViewById(R.id.donationImage));
+                    Bitmap ab= BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                    outputStream = new ByteArrayOutputStream();
+                    ab.compress(Bitmap.CompressFormat.JPEG,50,outputStream);
+                }
+            }
+        catch (Exception e){
+
+        }}
     }
 
     class MyAdapter extends FragmentPagerAdapter{

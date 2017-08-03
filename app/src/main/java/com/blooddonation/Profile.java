@@ -188,6 +188,7 @@ public class Profile extends Fragment {
         if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             try {
+                if(result!=null){
                 Uri imageUri = result.getUri();
                 final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
@@ -214,7 +215,7 @@ public class Profile extends Fragment {
                         Toast.makeText(getContext(),"Photo not uploaded.try again",Toast.LENGTH_SHORT).show();
 progress.dismiss();
                     }
-                });
+                });}
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

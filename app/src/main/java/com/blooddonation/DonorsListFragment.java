@@ -31,6 +31,7 @@ public class DonorsListFragment extends Fragment {
     public View view;
     public RecyclerView list;
     public static MyRecyclerAdapter adapter;
+    private java.util.concurrent.CopyOnWriteArrayList<SmallUserObject> myList=MapsFragment.closePeople;
 
     @Nullable
     @Override
@@ -57,28 +58,42 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
        //check if a marker has been filtered out.
-        if(MapsFragment.closePeople.get(position).marker.isVisible()) {
-            if(MapsFragment.closePeople.get(position).clicked){
-                holder.itemView.setBackgroundColor(ColorUtils.setAlphaComponent(Color.CYAN,60));
-                MapsFragment.closePeople.get(position).clicked=false;
+
+        if(MapsFragment.sortedList.isEmpty()|| MapsFragment.sortedList==null) {
+            showList(holder,position,1);
+        }
+        else{
+            showList(holder,position,2);
+
+        }
+    }
+    void showList(final MyViewHolder holder, final int position, int list){
+        if(list==1){
+            myList=MapsFragment.closePeople;}else{
+            myList=MapsFragment.sortedList;
+        }
+        if (myList.get(position).marker.isVisible()) {
+            if (myList.get(position).clicked) {
+                holder.itemView.setBackgroundColor(ColorUtils.setAlphaComponent(Color.CYAN, 60));
+                myList.get(position).clicked = false;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       holder.itemView.setBackgroundColor(Color.WHITE);
+                        holder.itemView.setBackgroundColor(Color.WHITE);
                     }
-                },1000);
+                }, 1000);
             }
             holder.itemView.setVisibility(View.VISIBLE);
-            holder.name.setText(MapsFragment.closePeople.get(position).name);
-            holder.phone.setText(MapsFragment.closePeople.get(position).phone);
-            holder.loc.setText(MapsFragment.closePeople.get(position).city);
-            holder.bloodgroup.setText(MapsFragment.closePeople.get(position).bloodgroup);
-            Glide.with(getContext()).load(MapsFragment.closePeople.get(position).photo).into(holder.donorImage);
+            holder.name.setText(myList.get(position).name);
+            holder.phone.setText(myList.get(position).phone);
+            holder.loc.setText(myList.get(position).city);
+            holder.bloodgroup.setText(myList.get(position).bloodgroup);
+            Glide.with(getContext()).load(myList.get(position).photo).into(holder.donorImage);
             holder.call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (MapsFragment.closePeople.get(position).phone != null) {
-                        Intent call = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + MapsFragment.closePeople.get(position).phone));
+                    if (myList.get(position).phone != null) {
+                        Intent call = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + myList.get(position).phone));
                         startActivity(call);
                     }
                 }
@@ -86,7 +101,7 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
             holder.sms.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + MapsFragment.closePeople.get(position).phone));
+                    Intent sms = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + myList.get(position).phone));
                     sms.putExtra("sms_body", "Hey! I got your number from Blood Donation App.I am in urgent need of your blood group." +
                             "Please revert asap.\n\nThanks.");
                     startActivity(sms);
@@ -98,23 +113,25 @@ class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder>{
                     Intent em = new Intent(Intent.ACTION_SENDTO);
                     em.setData(Uri.parse("mailto:"));
                     em.putExtra(Intent.EXTRA_SUBJECT, "Blood Required[URGENT]");
-                    em.putExtra(Intent.EXTRA_EMAIL, MapsFragment.closePeople.get(position).email);
-                    em.putExtra(Intent.EXTRA_TEXT, "Hello " + MapsFragment.closePeople.get(position).name + "\n\n" +
+                    em.putExtra(Intent.EXTRA_EMAIL, myList.get(position).email);
+                    em.putExtra(Intent.EXTRA_TEXT, "Hello " + myList.get(position).name + "\n\n" +
                             "I am writing this mail , as i am in the urgent need of blood same as your blood group. " +
                             "Any help from your side would be great.\n\n" +
                             "Yours truly \n" + Dashboard.user.mname);
                     startActivity(em);
                 }
             });
-        }else{//hides a card if not in filter range
+        } else {//hides a card if not in filter range
             holder.itemView.setVisibility(View.GONE);
-        }
-
-    }
-
+        }}
     @Override
     public int getItemCount() {
-        return MapsFragment.closePeople.size();
+        if(MapsFragment.sortedList.isEmpty()){
+            return MapsFragment.closePeople.size();
+        }
+        else{
+            return MapsFragment.sortedList.size();
+        }
     }
 }
     class MyViewHolder extends RecyclerView.ViewHolder{

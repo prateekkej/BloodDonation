@@ -51,13 +51,14 @@ public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickLi
     private GoogleApiClient googleApiClient;
     public MarkerOptions me;
     public View view;
-    public static java.util.concurrent.CopyOnWriteArrayList<SmallUserObject> closePeople;
+    public static java.util.concurrent.CopyOnWriteArrayList<SmallUserObject> closePeople,sortedList;
 
     public void filter(){
         sortMyMap();
     }
     void sortMyMap(){
         //filters out the people with selected Blood groups.
+        sortedList.clear();
         for(SmallUserObject i : closePeople) {
             if (Dashboard.fbloodgroup != null) {
                 if (i.bloodgroup != null && !i.bloodgroup.equals(Dashboard.fbloodgroup) || i.bloodgroup == null) {
@@ -65,13 +66,16 @@ public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickLi
                 }
                 if (i.bloodgroup != null && i.bloodgroup.equals(Dashboard.fbloodgroup) || i.bloodgroup == null) {
                     i.marker.setVisible(true);
+                    sortedList.add(i);
                 }
             }
-            DonorsListFragment.adapter.notifyDataSetChanged();
         }
+        DonorsListFragment.adapter.notifyDataSetChanged();
+
     }
     public void clearFilter(){
         //clears filter if any
+        sortedList.clear();
     for(SmallUserObject i : closePeople){
                  if(i.marker!=null)
                    i.marker.setVisible(true);
@@ -87,6 +91,7 @@ public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickLi
                 .addConnectionCallbacks(this).build();
         //concurrent list bcoz multiple users can change their location at a moment.
         closePeople=new java.util.concurrent.CopyOnWriteArrayList<SmallUserObject>();
+        sortedList= new java.util.concurrent.CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -220,8 +225,6 @@ public class MapsFragment extends Fragment  implements GoogleMap.OnMarkerClickLi
                     addMarker(temp);
             closePeople.add(temp);
                 sortMyMap();
-
-
             }
 
         }
